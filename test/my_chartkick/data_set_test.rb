@@ -48,7 +48,7 @@ class DataSetTest < Minitest::Test
     assert_equal exp, ds[1][:data].keys
   end
 
-  def test_x_y_key_asc
+  def test_x_y_key_desc
     ds = MyChartkick::DataSet.create data, x: :odd_or_even, y: :gt9, desc: :key
     exp = ['odd', 'even']
     assert_equal exp, ds[0][:data].keys
