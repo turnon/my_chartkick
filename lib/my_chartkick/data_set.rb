@@ -8,8 +8,13 @@ module MyChartkick
         raise ArgumentError, ':x requried, :y optional' unless opt[:x]
         ds = opt[:y] ? XY.new(data, opt[:x], opt[:y]) : X.new(data, opt[:x])
         ds.supply_keys! opt[:keys] if opt[:keys]
-        ds.sort! opt
+        ds.sort! opt if opt[:asc] or opt[:desc]
+        ds.limit! limit_conditions(opt) if opt[:first] or opt[:last]
         ds.data_set
+      end
+
+      def limit_conditions opt
+        opt.select{|k ,v| [:first, :last].include? k}
       end
     end
 
@@ -31,6 +36,10 @@ module MyChartkick
            end
       Hash[hash.sort &by]
     end
+
+    def limit_hash hash, limit, n
+      Hash[hash.to_a.send(limit, n)]
+    end
   end
 
   class X < DataSet
@@ -41,12 +50,18 @@ module MyChartkick
 
     def supply_keys! keys
       keys.each do |k|
-        @data_set[k] = 0 unless @data_set[k]
+        data_set[k] = 0 unless @data_set[k]
       end
     end
 
-    def sort! opt={}
+    def sort! opt
       @data_set = sort data_set, opt
+    end
+
+    def limit! opt
+      opt.each do |limit, n|
+        @data_set = limit_hash data_set, limit, n
+      end
     end
   end
 
@@ -77,10 +92,18 @@ module MyChartkick
       end
     end
 
-    def sort! opt={}
+    def sort! opt
       raise ArgumentError, 'chart with :y can not be sorted by :count' if [opt[:asc], opt[:desc]].include? :count
       data_set.each do |subset|
         subset[:data] = sort subset[:data], opt
+      end
+    end
+
+    def limit! opt
+      data_set.each do |subset|
+        opt.each do |limit, n|
+          subset[:data] = limit_hash subset[:data], limit, n
+        end
       end
     end
   end
