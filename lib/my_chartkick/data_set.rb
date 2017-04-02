@@ -81,6 +81,8 @@ module MyChartkick
             objs[x] = [] unless objs[x]
           end
           {name: key, data: count(objs)}
+        end.sort_by do |hash|
+          hash[:name]
         end
     end
 
