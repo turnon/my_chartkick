@@ -7,6 +7,7 @@ module MyChartkick
       def create data, opt={}
         raise ArgumentError, ':x requried, :y optional' unless opt[:x]
         ds = opt[:y] ? XY.new(data, opt[:x], opt[:y]) : X.new(data, opt[:x])
+        ds.supply_keys! opt[:keys] if opt[:keys]
         ds.sort! opt
         ds.data_set
       end
@@ -38,6 +39,12 @@ module MyChartkick
       @data_set = count x
     end
 
+    def supply_keys! keys
+      keys.each do |k|
+        @data_set[k] = 0 unless @data_set[k]
+      end
+    end
+
     def sort! opt={}
       @data_set = sort data_set, opt
     end
@@ -60,6 +67,14 @@ module MyChartkick
           end
           {name: key, data: count(objs)}
         end
+    end
+
+    def supply_keys! keys
+      data_set.each do |subset|
+        keys.each do |k|
+          subset[:data][k] = 0 unless subset[:data][k]
+        end
+      end
     end
 
     def sort! opt={}
