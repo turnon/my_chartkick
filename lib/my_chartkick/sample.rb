@@ -1,4 +1,5 @@
 require 'erb'
+require 'mutex_m'
 
 module MyChartkick
   class Sample
@@ -13,6 +14,7 @@ module MyChartkick
         o_method = "#{method_id}_for_sample"
         alias_method o_method, method_id
         define_method method_id do |data, opt|
+          give_id! opt
           chart = send o_method, data, opt
           charts << chart
         end
@@ -23,6 +25,10 @@ module MyChartkick
     def initialize cdn: false
       @jslib = cdn ? MyChartkick::CDN : MyChartkick::Inline
       @charts = []
+    end
+
+    def give_id! opt
+      opt.merge!({id: ChartId.next}) unless opt[:id]
     end
 
     def to_s
@@ -41,6 +47,21 @@ module MyChartkick
   </body>
 </html>
 EOHTML
+
+  ChartId = Class.new do
+    include Mutex_m
+    def initialize
+      @id = -1
+      super
+    end
+
+    def next
+      lock
+      @id += 1
+      unlock
+      @id.to_s
+    end
+  end.new
 
   end
 end
