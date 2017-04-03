@@ -26,4 +26,5 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "chartkick", "~> 2.2.3"
   spec.add_dependency "rand_palette", "~> 0.1.0"
+  spec.add_dependency "activesupport", "> 3.0.0"
 end
