@@ -11,23 +11,31 @@ module MyChartkick
      {chart: {zoomType: 'xy'}
     }}
 
-  Chartkick::Helper.instance_methods.each do |method|
-    define_method "my_#{method}" do |data, opt|
+  include Chartkick::Helper
+
+  Chartkick::Helper.instance_methods.each do |helper|
+    define_method "my_#{helper}" do |data, opt|
       opt = opt.dup
       data_set = DataSet.create data, opt
-      opt.merge!({colors: RandPalette.random(data_set.count, alpha: 0.8)}) if Array === data_set
-      opt.deep_merge!(DefaultLibOption){|k, old, neo| old}
-      chart_block = send method, data_set, opt
+      colorize! data_set, opt
+      merge_default_opt! opt
+      chart_block = send helper, data_set, opt
       return chart_block unless opt[:title]
       title_block(opt[:title]) + chart_block
     end
   end
 
+  def colorize! data_set, opt
+    opt.merge!({colors: RandPalette.random(data_set.count, alpha: 0.8)}) if Array === data_set
+  end
+
+  def merge_default_opt! opt
+    opt.deep_merge!(DefaultLibOption){|k, old, neo| old}
+  end
+
   def title_block str
     "<div class='my-chartkick-title'>#{str}</div>"
   end
-
-  include Chartkick::Helper
 
   def self.sample cdn: false, &blk
     Sample.new(cdn: cdn).tap do |smp|
