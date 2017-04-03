@@ -2,7 +2,7 @@ require 'erb'
 require 'mutex_m'
 
 module MyChartkick
-  class Sample
+  class Bundle
     include MyChartkick
 
     MyChartkick.
@@ -11,7 +11,7 @@ module MyChartkick
         m =~ /^my/
       end.
       each do |method_id|
-        o_method = "#{method_id}_for_sample"
+        o_method = "#{method_id}_in_bundle"
         alias_method o_method, method_id
         define_method method_id do |data, opt|
           give_id! opt
@@ -20,10 +20,9 @@ module MyChartkick
         end
       end
 
-    attr_reader :charts, :jslib
+    attr_reader :charts
 
-    def initialize cdn: false
-      @jslib = cdn ? MyChartkick::CDN : MyChartkick::Inline
+    def initialize
       @charts = []
     end
 
@@ -31,7 +30,8 @@ module MyChartkick
       opt.merge!({id: ChartId.next}) unless opt[:id]
     end
 
-    def to_s
+    def sample cdn: false
+      jslib = cdn ? MyChartkick::CDN : MyChartkick::Inline
       ERB.new(Template).result binding
     end
 

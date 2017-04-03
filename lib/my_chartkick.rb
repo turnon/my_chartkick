@@ -37,9 +37,9 @@ module MyChartkick
     "<div class='my-chartkick-title'>#{str}</div>"
   end
 
-  def self.sample cdn: false, &blk
-    Sample.new(cdn: cdn).tap do |smp|
-      blk.call smp
+  def self.bundle &blk
+    Bundle.new.tap do |bundle|
+      blk.call bundle
     end
   end
 
@@ -56,4 +56,4 @@ module MyChartkick
 
 end
 
-require 'my_chartkick/sample'
+require 'my_chartkick/bundle'
