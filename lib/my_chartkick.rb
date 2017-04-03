@@ -6,7 +6,11 @@ require 'active_support/core_ext/hash/deep_merge'
 
 module MyChartkick
 
-  DefaultLibOption = {library: {chart: {zoomType: 'xy'}}}
+  DefaultLibOption =
+    {library:
+     {chart: {zoomType: 'xy'},
+      title: {verticalAlign: 'top', align: 'left', x: 50}
+    }}
 
   Chartkick::Helper.instance_methods.each do |method|
     define_method "my_#{method}" do |data, opt|
@@ -14,8 +18,14 @@ module MyChartkick
       data_set = DataSet.create data, opt
       opt.merge!({colors: RandPalette.random(data_set.count, alpha: 0.8)}) if Array === data_set
       opt.deep_merge!(DefaultLibOption){|k, old, neo| old}
+      config_title! opt
       send method, data_set, opt
     end
+  end
+
+  def config_title! opt
+    title = opt.delete :title
+    opt.deep_merge!({library: {title: {text: title}}})
   end
 
   include Chartkick::Helper
