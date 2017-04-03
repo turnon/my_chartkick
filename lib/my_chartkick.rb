@@ -8,8 +8,7 @@ module MyChartkick
 
   DefaultLibOption =
     {library:
-     {chart: {zoomType: 'xy'},
-      title: {verticalAlign: 'top', align: 'left', x: 50}
+     {chart: {zoomType: 'xy'}
     }}
 
   Chartkick::Helper.instance_methods.each do |method|
@@ -18,14 +17,14 @@ module MyChartkick
       data_set = DataSet.create data, opt
       opt.merge!({colors: RandPalette.random(data_set.count, alpha: 0.8)}) if Array === data_set
       opt.deep_merge!(DefaultLibOption){|k, old, neo| old}
-      config_title! opt
-      send method, data_set, opt
+      chart_block = send method, data_set, opt
+      return chart_block unless opt[:title]
+      title_block(opt[:title]) + chart_block
     end
   end
 
-  def config_title! opt
-    title = opt.delete :title
-    opt.deep_merge!({library: {title: {text: title}}})
+  def title_block str
+    "<div class='my-chartkick-title'>#{str}</div>"
   end
 
   include Chartkick::Helper
