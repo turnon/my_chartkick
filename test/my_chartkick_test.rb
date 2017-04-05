@@ -15,7 +15,7 @@ class MyChartkickTest < Minitest::Test
 
   def test_common_chart
     charts =
-      MyChartkick.sample do |sample|
+      MyChartkick.bundle do |sample|
         %w{line column bar area}.each_with_index do |ch, i|
           i = i + 1
           sample.send "my_#{ch}_chart", data, x: :odd_or_even, id: i.to_s
@@ -26,7 +26,7 @@ class MyChartkickTest < Minitest::Test
       end
 
     File.open('/tmp/my_chartkick_test.html', 'w') do |f|
-      f.puts charts
+      f.puts charts.sample cdn: true
     end
   end
 

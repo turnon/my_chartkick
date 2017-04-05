@@ -43,8 +43,8 @@ module MyChartkick
     end
   end
 
-  CDN = "<script src='http://cdn.cdnjs.net/highcharts/5.0.0/highcharts.js'></script>
-         <script src='http://cdn.cdnjs.net/chartkick/2.1.0/chartkick.min.js'></script>"
+  CDN = '<script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/5.0.10/highcharts.js"></script>
+         <script src="https://cdnjs.cloudflare.com/ajax/libs/chartkick/2.2.3/chartkick.min.js"></script>'
 
   Jslib = File.expand_path '../my_chartkick/js', __FILE__
 
