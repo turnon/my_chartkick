@@ -19,9 +19,10 @@ module MyChartkick
       data_set = DataSet.create data, opt
       colorize! data_set, opt
       merge_default_opt! opt
+      title = opt.delete :title
       chart_block = send helper, data_set, opt
-      return chart_block unless opt[:title]
-      title_block(opt[:title]) + chart_block
+      return chart_block unless title
+      title_block(title) + chart_block
     end
   end
 
